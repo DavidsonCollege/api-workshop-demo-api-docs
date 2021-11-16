@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: '1.0.0'
-  title: 'Order Management'
+  title: 'Order Management Solutions API'
 servers:
   - url: 'https://davidson-api-workshop.azurewebsites.net/api'
 paths:
