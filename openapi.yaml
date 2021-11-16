@@ -1,0 +1,594 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'Order Management'
+servers:
+  - url: 'https://davidson-api-workshop.azurewebsites.net/api'
+paths:
+  /customers:
+    get:
+      summary: 'Returns all customer of the shop'
+      parameters:
+        - name: name
+          in: query
+          description: Match by customer name. Returns partial matches
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Match by customer email. Returns partial matches
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'List of customers'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: 'Creates a new customer'
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Customer Name
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: true
+          description: Customer Email
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Details about the created customer'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customers/{id}:
+    get:
+      summary: 'Returns details about a particular customer by `id`'
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'Details about a customer by ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: 'Updates details about a customer by `id`'
+      parameters:
+        - name: id
+          in: path
+          description: ID of the customer
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: name
+          in: query
+          description: Customer Name
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Customer Email
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Details about a customer by ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /goods:
+    get:
+      summary: 'Returns all items available at a shop'
+      parameters:
+        - name: name
+          in: query
+          description: Match by item name. Returns partial matches
+          schema:
+            type: string
+        - name: sort_by
+          in: query
+          description: Sort items by name or price
+          schema:
+            type: string
+            enum:
+              - name
+              - price
+        - name: sort_order
+          in: query
+          description: Order by which to sort the items from `sort_by`. Default is `asc`
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+      responses:
+        '200':
+          description: 'List of items from shop'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Good'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: 'Creates a new item for the shop'
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Item Name
+          schema:
+            type: string
+        - name: price
+          in: query
+          required: true
+          description: Item price per unit
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: 'Details about the created item'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Good'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /goods/{id}:
+    get:
+      summary: 'Returns details about a particular item by `id`'
+      parameters:
+        - name: id
+          in: path
+          description: ID of item
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'Details about an item'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Good'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: 'Updates details about an item by `id`'
+      parameters:
+        - name: id
+          in: path
+          description: ID of the good
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: name
+          in: query
+          description: Item name
+          schema:
+            type: string
+        - name: price
+          in: query
+          description: Item price per unit
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: 'Details about an item by ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders:
+    get:
+      summary: 'Returns all orders for a shop'
+      parameters:
+        - name: customer_id
+          in: query
+          description: Filter by customer id
+          schema:
+            type: integer
+            format: int32
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            $ref: '#/components/schemas/Status'
+      responses:
+        '200':
+          description: 'List of orders from shop'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: 'Creates a new order for the shop'
+      parameters:
+        - name: customer_id
+          in: query
+          required: true
+          description: Customer Id
+          schema:
+            type: integer
+            format: int32
+        - name: status
+          in: query
+          description: (Optional) The status of the order
+          schema:
+            $ref: '#/components/schemas/Status'
+        - name: goods
+          in: query
+          description: Array of items to add to the order. Each must contain an item id and count
+          schema:
+            $ref: '#/components/schemas/ArrayOfGoods'
+      responses:
+        '200':
+          description: 'Details about the created order'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{id}:
+    get:
+      summary: 'Returns details about a particular order by `id`'
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'Details about an order'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: 'Updates ALL details about an order by `id`. Warning! This will delete ALL current items attached to the order. Use PATCH to update the order instead.'
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: customer_id
+          in: query
+          required: true
+          description: Customer Id
+          schema:
+            type: integer
+            format: int32
+        - name: status
+          in: query
+          description: (Optional) The status of the order
+          schema:
+            $ref: '#/components/schemas/Status'
+        - name: goods
+          in: query
+          description: Array of items to add to the order. Each must contain an item id and count
+          schema:
+            $ref: '#/components/schemas/ArrayOfGoods'
+      responses:
+        '200':
+          description: 'Details about the updated order'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: 'Updates details about an order by `id`. Upserts (updates or inserts) associated items.'
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: customer_id
+          in: query
+          description: Customer Id
+          schema:
+            type: integer
+            format: int32
+        - name: status
+          in: query
+          description: (Optional) The status of the order
+          schema:
+            $ref: '#/components/schemas/Status'
+        - name: goods
+          in: query
+          description: Array of items to add to the order. Each must contain an item id and count
+          schema:
+            $ref: '#/components/schemas/ArrayOfGoods'
+      responses:
+        '200':
+          description: 'Details about the updated order'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: 'Deletes an order'
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'A message about the deletion'
+          content:
+            application/text:
+              schema:
+                type: string
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /invoice/{order_id}:
+    get:
+      summary: 'Returns an invoice for an order by `order_id`'
+      parameters:
+        - name: order_id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: 'Invoice for the order'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoce'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ArrayOfGoods:
+      type: array
+      items:
+        type: object
+        required:
+          - id
+          - count
+        properties:
+          id:
+            type: integer
+            format: int64
+          count:
+            type: integer
+            format: int32
+    Status:
+      type: string
+      enum:
+        - cart
+        - paid
+        - ready4Pickup
+        - completed
+    Customer:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+    Good:
+      type: object
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+    Order:
+      type: object
+      required:
+        - id
+        - customer_id
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        customer_id:
+          type: integer
+          format: int64
+        status:
+          $ref: '#/components/schemas/Status'
+    Invoice:
+      type: object
+      required:
+        - order_id
+        - customer
+        - status
+        - line_item
+        - subtotal
+        - tax
+        - total
+      properties:
+        order_id:
+          type: integer
+          format: int64
+        customer:
+          $ref: '#/components/schemas/Customer'
+        status:
+          $ref: '#/components/schemas/Status'
+        line_item:
+          $ref: '#/components/schemas/LineItem'
+        subtotal:
+          type: number
+          format: float
+        tax:
+          type: number
+          format: float
+        total:
+          type: number
+          format: float
+    LineItem:
+      type: object
+      required:
+        - id
+        - name
+        - price_per_unit
+        - count
+        - total
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price_per_unit:
+          type: number
+          format: float
+        count:
+          type: integer
+          format: int32
+        total:
+          type: number
+          format: float
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-functions-key
+security:
+  - ApiKeyAuth: []
